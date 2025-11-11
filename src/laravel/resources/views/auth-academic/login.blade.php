@@ -1,4 +1,4 @@
-@extends('layouts.auth')
+@extends('layouts.auth-academic')
 
 @section('content')
 <div class="login-container">
@@ -8,11 +8,11 @@
         {{-- <img src="{{ asset('images/logo2.png') }}" alt="Logo 2"> --}}
     </div>
     @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
-    <h2 class="title">Login - Responsável</h2>
+    <h2 class="title">Login - Aluno</h2>
 
     @if ($errors->any())
         <div class="alert alert-danger">
-            {{ $errors->first('teste') }}
+            {{ $errors->first() }}
         </div>
     @endif
 
@@ -20,16 +20,18 @@
         @csrf
 
         <div class="form-group">
+            {{-- <label for="ra">RA/Aluno</label> --}}
             <input type="text" 
-                   id="email" 
-                   name="email" 
-                   value="{{ old('email') }}" 
-                   placeholder="Digite seu Email"
+                   id="ra" 
+                   name="ra" 
+                   value="{{ old('ra') }}" 
+                   placeholder="Digite seu RA"
                    required 
                    autofocus>
         </div>
 
         <div class="form-group">
+            {{-- <label for="password">Senha</label> --}}
             <input type="password" 
                    id="password" 
                    name="password" 
@@ -44,7 +46,7 @@
     </form>
 
     <div class="links">
-        <a class="auth" href="{{ route('auth-academic') }}">Acesso para Alunos</a>
+        <a class="auth" href="{{ route('login') }}">Acesso para Responsáveis</a>
     </div>
 </div>
 @endsection
