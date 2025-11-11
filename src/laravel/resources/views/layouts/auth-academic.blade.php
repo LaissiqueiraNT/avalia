@@ -131,20 +131,20 @@
             text-decoration: none;
             font-size: 14px;
             transition: color 0.3s ease;
-
+            
         }
 
         .links a:hover {
             color: var(--primary-green);
         }
 
-        .links .auth {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 30px;
-            margin-bottom: 15px;
-        }
+       .links .auth {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
 
 
 
