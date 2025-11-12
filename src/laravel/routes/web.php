@@ -6,9 +6,9 @@ use App\Http\Controllers\HomeController;
 
 
 Route::redirect('/', '/auth-academic');
-Route::get('/', [HomeController::class, 'index'],)
-    ->name('home')
-    ->middleware('auth');
+// Route::get('/', [HomeController::class, 'index'],)
+//     ->name('home')
+//     ->middleware('auth');
 
 Auth::routes();
 
