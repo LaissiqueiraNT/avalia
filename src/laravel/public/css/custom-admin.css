@@ -1,0 +1,47 @@
+body {
+    background: linear-gradient(135deg, #0a192f 0%, #122c5d 100%);
+    color: #f8f9fa;
+}
+
+.main-header.navbar {
+    background: linear-gradient(90deg, #006b9f, #00bfa6);
+    border-bottom: none;
+}
+
+.main-sidebar {
+    background-color: #0f172a !important;
+}
+
+.brand-link {
+    background: linear-gradient(90deg, #004e92, #000428);
+    color: #fff !important;
+    font-weight: bold;
+}
+
+.brand-link .brand-image {
+    opacity: 0.9;
+}
+
+.content-wrapper {
+    background: transparent;
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-header {
+    background: linear-gradient(90deg, #006b9f, #00bfa6);
+    color: #fff;
+}
+
+.btn-primary {
+    background-color: #00bfa6;
+    border-color: #00bfa6;
+}
+
+.btn-primary:hover {
+    background-color: #009c8b;
+    border-color: #009c8b;
+}

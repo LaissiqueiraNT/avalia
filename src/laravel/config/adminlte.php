@@ -63,12 +63,12 @@ return [
     |
     */
 
-    'logo' => '<b>Admin</b>LTE',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image img-circle elevation-3',
-    'logo_img_xl' => null,
+    'logo' => '&nbsp;',
+    'logo_img' => 'img/logo-menu.png',
+    'logo_img_class' => 'brand-image',
+    'logo_img_xl' => 'img/logo-unifaa.png',
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'UNIFAA Logo',
 
     /*
     |--------------------------------------------------------------------------
@@ -113,11 +113,10 @@ return [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => 'img/logo-unifaa.png',              //AQUI
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
-            'width' => 60,
-            'height' => 60,
+            'width' => 190,
         ],
     ],
 
@@ -134,11 +133,10 @@ return [
     */
 
     'usermenu_enabled' => true,
-    'usermenu_header' => false,
+    'usermenu_header' => true,
     'usermenu_header_class' => 'bg-primary',
     'usermenu_image' => false,
     'usermenu_desc' => false,
-    'usermenu_profile_url' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -157,7 +155,7 @@ return [
     'layout_fixed_sidebar' => null,
     'layout_fixed_navbar' => null,
     'layout_fixed_footer' => null,
-    'layout_dark_mode' => null,
+    'layout_dark_mode' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -171,12 +169,11 @@ return [
     |
     */
 
-    'classes_auth_card' => 'card-outline card-primary',
-    'classes_auth_header' => '',
-    'classes_auth_body' => '',
-    'classes_auth_footer' => '',
-    'classes_auth_icon' => '',
-    'classes_auth_btn' => 'btn-flat btn-primary',
+    'classes_body' => 'text-sm accent-info',
+    'classes_brand' => 'bg-gradient-to-r from-cyan-600 to-blue-700',
+    'classes_topnav' => 'navbar-dark navbar-cyan',
+    'classes_sidebar' => 'sidebar-dark-primary elevation-4',
+    'classes_sidebar_nav' => 'nav-child-indent nav-compact nav-flat',
 
     /*
     |--------------------------------------------------------------------------
@@ -283,7 +280,7 @@ return [
     */
 
     'laravel_asset_bundling' => false,
-    'laravel_css_path' => 'css/app.css',
+    'laravel_css_path' => 'css/appcustom.css',
     'laravel_js_path' => 'js/app.js',
 
     /*

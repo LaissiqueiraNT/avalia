@@ -7,7 +7,7 @@
         <img src="{{ asset('img/login.png') }}" alt="Logo 1">
         {{-- <img src="{{ asset('images/logo2.png') }}" alt="Logo 2"> --}}
     </div>
-    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
+    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/appcustom.css'])
     <h2 class="title">Login - Aluno</h2>
 
     @if ($errors->any())
@@ -16,7 +16,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('login') }}">
+    <form method="POST" action="{{ route('auth-academic.login') }}">
         @csrf
 
         <div class="form-group">
