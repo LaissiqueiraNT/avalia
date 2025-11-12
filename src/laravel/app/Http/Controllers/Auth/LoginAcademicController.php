@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
-class LoginController extends Controller
+class LoginAcademicController extends Controller
 {
     /*
     |--------------------------------------------------------------------------
@@ -19,6 +19,11 @@ class LoginController extends Controller
     */
 
     use AuthenticatesUsers;
+
+    protected function username()
+    {
+        return 'ra';
+    }
 
     /**
      * Where to redirect users after login.

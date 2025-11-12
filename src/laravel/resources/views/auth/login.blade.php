@@ -7,7 +7,7 @@
         <img src="{{ asset('img/login.png') }}" alt="Logo 1">
         {{-- <img src="{{ asset('images/logo2.png') }}" alt="Logo 2"> --}}
     </div>
-    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/app.css'])
+    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/appcustom.css'])
     <h2 class="title">Login - Responsável</h2>
 
     @if ($errors->any())
@@ -20,7 +20,7 @@
         @csrf
 
         <div class="form-group">
-            <input type="text" 
+            <input type="email" 
                    id="email" 
                    name="email" 
                    value="{{ old('email') }}" 
