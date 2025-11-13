@@ -1,5 +1,5 @@
 {{-- resources/views/auth-academic/forgot-password.blade.php --}}
-@extends('layouts.auth-academic')
+@extends('layouts.layouts-auth-academic')
 
 @section('content')
 <div class="login-container">

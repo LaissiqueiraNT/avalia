@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - {{ config('app.name') }}</title>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -165,6 +166,7 @@
 
 <body>
     @yield('content')
+    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/appcustom.css'])
 </body>
 
 </html>

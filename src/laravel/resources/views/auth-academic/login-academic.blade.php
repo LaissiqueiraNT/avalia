@@ -1,19 +1,17 @@
-@extends('layouts.layouts-auth')
+@extends('layouts.layouts-auth-academic')
 
 @section('content')
     <div class="login-container">
         <div class="logo-container">
             <img src="{{ asset('img/login.png') }}" alt="Logo 1">
         </div>
-        @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/appcustom.css'])
-        <h2 class="title">Login - Responsável</h2>
-
+        <h2 class="title">Login - Aluno</h2>
         @if ($errors->any())
             <script>
                 Swal.fire({
                     icon: 'error',
                     title: 'Credenciais inválidas',
-                    text: 'Por favor, verifique seu Email e senha e tente novamente.',
+                    text: 'Por favor, verifique seu RA e senha e tente novamente.',
                     confirmButtonColor: '#0FAB93',
                     background: '#12151f',
                     color: '#fff',
@@ -21,12 +19,13 @@
             </script>
         @endif
 
-        <form id="loginForm" method="POST" action="{{ route('login') }}">
+
+        <form id="loginForm" method="POST" action="{{ route('auth-academic.login') }}">
             @csrf
 
             <div class="form-group">
-                <input type="email" id="email" name="email" value="{{ old('email') }}"
-                    placeholder="Digite seu Email" autofocus>
+                <input type="text" id="ra" name="ra" value="{{ old('ra') }}" placeholder="Digite seu RA"
+                    autofocus>
             </div>
 
             <div class="form-group">
@@ -39,8 +38,9 @@
             <button type="submit" class="btn-login">Entrar</button>
         </form>
 
+
         <div class="links">
-            <a class="auth" href="{{ route('auth-academic') }}">Acesso para Alunos</a>
+            <a class="auth" href="{{ route('login') }}">Acesso para Responsáveis</a>
         </div>
     </div>
     <script>
@@ -49,10 +49,10 @@
 
             if (form) {
                 form.addEventListener('submit', function(e) {
-                    const email = document.getElementById('email').value.trim();
+                    const ra = document.getElementById('ra').value.trim();
                     const password = document.getElementById('password').value.trim();
 
-                    if (!email || !password) {
+                    if (!ra || !password) {
                         e.preventDefault();
                         Swal.fire({
                             icon: 'warning',

@@ -10,7 +10,7 @@ Route::redirect('/', '/auth-academic');
 
 // Página de login acadêmico (view)
 Route::get('/auth-academic', function () {
-    return view('auth-academic.login');
+    return view('auth-academic.login-academic');
 })->name('auth-academic');
 
 // Login acadêmico (POST)
@@ -23,7 +23,6 @@ Route::get('/dashboard', [HomeController::class, 'index'])
     ->middleware('auth');
 
 Auth::routes();
-
 
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetCode'])->name('password.email');
