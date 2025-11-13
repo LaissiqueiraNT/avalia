@@ -8,7 +8,7 @@ export default defineConfig({
                 'resources/sass/app.scss',
                 'resources/js/app.js',
                 'resources/css/appcustom.css',
-                'public/css/custom-admin.css',
+                // 'public/css/custom-admin.css',
             ],
             refresh: true,
         }),
