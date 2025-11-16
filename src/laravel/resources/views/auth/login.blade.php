@@ -29,11 +29,11 @@
                     placeholder="Digite seu Email" autofocus>
             </div>
 
-            <div class="form-group">
+            <div class="form-group password-wrapper" style="position: relative;">
                 <input type="password" id="password" name="password" placeholder="Digite sua senha">
-                <div class="links" style="text-align: left; margin-top: 8px;">
-                    <a href="{{ route('password.request') }}">Esqueci a senha</a>
-                </div>
+
+                <img id="togglePassword" src="{{ asset('img/hide.png') }}"
+                    style="width: 22px; position: absolute; right: 30px; top: 50%; transform: translateY(-50%); cursor: pointer;">
             </div>
 
             <button type="submit" class="btn-login">Entrar</button>
@@ -65,6 +65,20 @@
                     }
                 });
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const passwordInput = document.getElementById('password');
+            const togglePassword = document.getElementById('togglePassword');
+
+            togglePassword.addEventListener('click', function() {
+                const type = passwordInput.type === 'password' ? 'text' : 'password';
+                passwordInput.type = type;
+
+                this.src = type === 'password' ?
+                    "{{ asset('img/hide.png') }}" :
+                    "{{ asset('img/view.png') }}";
+            });
         });
     </script>
 @endsection
