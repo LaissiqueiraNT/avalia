@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - {{ config('app.name') }}</title>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -131,20 +132,20 @@
             text-decoration: none;
             font-size: 14px;
             transition: color 0.3s ease;
-            
+
         }
 
         .links a:hover {
             color: var(--primary-green);
         }
 
-       .links .auth {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 30px;
-    margin-bottom: 15px;
-}
+        .links .auth {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
 
 
 
@@ -165,6 +166,7 @@
 
 <body>
     @yield('content')
+    @vite(['resources/sass/app.scss', 'resources/js/app.js', 'resources/css/appcustom.css'])
 </body>
 
 </html>
