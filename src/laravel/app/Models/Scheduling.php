@@ -3,14 +3,30 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Scheduling extends Model
 {
     protected $table = 'schedulings';
     protected $guarded = [];
+    
+    protected $casts = [
+        'scheduling' => 'datetime',
+    ];
 
-    public function discipline()
+    /**
+     * Relacionamento com o usuário (professor)
+     */
+    public function user(): BelongsTo
     {
-        return $this->belongsToMany(Discipline::class, 'scheduling_discipline', 'scheduling_id', 'discipline_id');
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relacionamento com a disciplina
+     */
+    public function discipline(): BelongsTo
+    {
+        return $this->belongsTo(Discipline::class);
     }
 }
