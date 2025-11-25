@@ -218,19 +218,19 @@ return [
         'icon' => 'fas fa-house-user',
 
     ],
-    [
-        'text' => 'Relatório',
-        'url'  => '#',
-        'icon' => 'fas fa-file-alt',
-    ],
+    // [
+    //     'text' => 'Relatório',
+    //     'url'  => '#',
+    //     'icon' => 'fas fa-file-alt',
+    // ],
     [
         'text' => 'Registrar Avaliações',
-        'url'  => 'scheduling',
+        'url'  => 'record-assessments',
         'icon' => 'fas fa-pen',
     ],
     [
         'text' => 'Corrigir Questões',
-        'url'  => '#',
+        'url'  => 'correct-questions',
         'icon' => 'fas fa-check-circle',
     ],
     [
