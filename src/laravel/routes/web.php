@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\LoginAcademicController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\RecordAssessmentsController;
+use App\Http\Controllers\SchedulingController;
 
 Route::redirect('/', '/auth-academic');
 
@@ -20,6 +22,19 @@ Route::post('/auth-academic', [LoginAcademicController::class, 'login'])
 // Dashboard (pós-login)
 Route::get('/dashboard', [HomeController::class, 'index'])
     ->name('home')
+    ->middleware('auth');
+
+// Rotas para Scheduling (Registrar Avaliações)
+Route::resource('scheduling', SchedulingController::class)->middleware('auth');
+
+// Route::resource('record-assessments', RecordAssessmentsController::class);
+
+Route::get('/record-assessments', [RecordAssessmentsController::class, 'index'])
+    ->name('record-assessments.index')
+    ->middleware('auth');
+
+    Route::post('/record-assessments', [RecordAssessmentsController::class, 'store'])
+    ->name('record-assessments.store')
     ->middleware('auth');
 
 Auth::routes();

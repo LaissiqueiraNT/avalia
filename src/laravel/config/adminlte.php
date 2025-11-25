@@ -215,32 +215,40 @@ return [
     [
         'text' => 'Início',
         'url'  => 'dashboard',
-        'icon' => 'fas fa-home',
+        'icon' => 'fas fa-house-user',
+
     ],
-    [
-        'text' => 'Resultados',
-        'url'  => '#',
-        'icon' => 'fas fa-chart-bar',
-    ],
-    [
-        'text' => 'Avaliações',
-        'url'  => '#',
-        'icon' => 'fas fa-list-alt',
-    ],
-    [
-        'text' => 'Relatórios',
-        'url'  => '#',
-        'icon' => 'fas fa-file-alt',
-    ],
+    // [
+    //     'text' => 'Relatório',
+    //     'url'  => '#',
+    //     'icon' => 'fas fa-file-alt',
+    // ],
     [
         'text' => 'Registrar Avaliações',
-        'url'  => '#',
+        'url'  => 'record-assessments',
         'icon' => 'fas fa-pen',
     ],
     [
-        'text' => 'Corrigir Avaliações',
-        'url'  => '#',
+        'text' => 'Corrigir Questões',
+        'url'  => 'correct-questions',
         'icon' => 'fas fa-check-circle',
+    ],
+    [
+        'text' => 'Início',
+        'url'  => 'dashboard',
+        'icon' => 'fas fa-house-user',
+
+    ],
+    [
+        'text' => 'Resultado',
+        'url'  => '#',
+        'icon' => 'fas fa-book',
+
+    ],[
+        'text' => 'Avaliação',
+        'url'  => '#',
+        'icon' => 'fas fa-file-invoice',
+
     ],
 ],
 
