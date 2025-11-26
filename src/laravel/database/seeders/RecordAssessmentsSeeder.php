@@ -14,7 +14,6 @@ class RecordAssessmentsSeeder extends Seeder
                 'discipline_id' => 1,
                 'primary_date' => '2025-03-10',
                 'end_date' => '2025-03-20',
-                'hours' => '08:00 - 12:00',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]

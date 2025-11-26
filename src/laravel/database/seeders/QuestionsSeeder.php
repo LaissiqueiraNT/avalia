@@ -12,16 +12,17 @@ class QuestionsSeeder extends Seeder
         DB::table('questions')->insert([
             [
                 'question' => 'Qual é a capital da França?',
-                'corret_response_id' => 2, // Opção B
+                'correct_response_id' => 2,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'question' => 'Quanto é 2 + 2?',
-                'corret_response_id' => 3, // Opção C
+                'correct_response_id' => 3,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+
         ]);
     }
 }

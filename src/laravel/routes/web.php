@@ -3,10 +3,10 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Auth\LoginAcademicController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\RecordAssessmentsController;
+use App\Http\Controllers\Auth\LoginAcademicController;
 use App\Http\Controllers\SchedulingController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::redirect('/', '/auth-academic');
 
@@ -24,18 +24,10 @@ Route::get('/dashboard', [HomeController::class, 'index'])
     ->name('home')
     ->middleware('auth');
 
-// Rotas para Scheduling (Registrar Avaliações)
-Route::resource('scheduling', SchedulingController::class)->middleware('auth');
-
 // Route::resource('record-assessments', RecordAssessmentsController::class);
-
-Route::get('/record-assessments', [RecordAssessmentsController::class, 'index'])
-    ->name('record-assessments.index')
+Route::resource('record-assessments', RecordAssessmentsController::class)
     ->middleware('auth');
 
-    Route::post('/record-assessments', [RecordAssessmentsController::class, 'store'])
-    ->name('record-assessments.store')
-    ->middleware('auth');
 
 Auth::routes();
 
@@ -43,3 +35,18 @@ Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkReques
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetCode'])->name('password.email');
 Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
 Route::post('/reset-password', [ForgotPasswordController::class, 'reset'])->name('password.update');
+
+
+// Agendamentos do aluno
+Route::prefix('scheduling')->middleware('auth')->group(function () {
+
+    Route::get('/', [SchedulingController::class, 'index'])
+        ->name('scheduling.index');
+
+
+    Route::get('/create/{assessment}', [SchedulingController::class, 'create'])
+        ->name('scheduling.create');
+
+    Route::post('/store', [SchedulingController::class, 'store'])
+        ->name('scheduling.store');
+});

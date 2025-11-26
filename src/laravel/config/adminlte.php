@@ -67,7 +67,7 @@ return [
     */
 
     'preloader' => [
-        'enabled' => true,
+        'enabled' => false,
         'mode' => 'fullscreen',
         'img' => [
             'path' => 'img/logo-unifaa.png',
@@ -226,27 +226,31 @@ return [
     [
         'text' => 'Registrar Avaliações',
         'url'  => 'record-assessments',
+        'can'  => 'isTeacher',
         'icon' => 'fas fa-pen',
     ],
     [
         'text' => 'Corrigir Questões',
         'url'  => 'correct-questions',
+        'can'  => 'isTeacher',
         'icon' => 'fas fa-check-circle',
     ],
-    [
-        'text' => 'Início',
-        'url'  => 'dashboard',
-        'icon' => 'fas fa-house-user',
+    // [
+    //     'text' => 'Início',
+    //     'url'  => 'dashboard',
+    //     'icon' => 'fas fa-house-user',
 
-    ],
+    // ],
     [
         'text' => 'Resultado',
         'url'  => '#',
+        'can'  => 'isStudent',
         'icon' => 'fas fa-book',
 
     ],[
         'text' => 'Avaliação',
-        'url'  => '#',
+        'url'  => 'scheduling',
+        'can'  => 'isStudent',
         'icon' => 'fas fa-file-invoice',
 
     ],

@@ -11,6 +11,11 @@ class RecordAssessment extends Model
     protected $table = 'record_assessments';
     protected $guarded = [];
 
+
+    public const TEST_TYPES = [
+        1 => 'A2',
+        2 => 'A3',
+    ];
     public function discipline(): BelongsTo
     {
         return $this->belongsTo(Discipline::class);
