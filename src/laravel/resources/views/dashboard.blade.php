@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard Customizado')
+@section('title', 'Dashboard')
 
 {{-- HEADER / NAVBAR --}}
 @vite(['resources/css/appcustom.css'])

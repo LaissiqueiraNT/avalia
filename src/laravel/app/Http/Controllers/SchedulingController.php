@@ -2,104 +2,77 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Course;
-use App\Models\Discipline;
+use App\Models\RecordAssessment;
 use App\Models\Scheduling;
+use App\Models\Enrollment;
+use Illuminate\Support\Facades\DB;
 
 class SchedulingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+      public function index()
     {
-        $courses = Course::all();
-        $disciplines = Discipline::all();
-        return view('scheduling.index', compact('courses', 'disciplines'));
+        $userId = auth()->id();
+
+        // pegar os cursos que o aluno está matriculado (via pivot)
+        $userCourses = DB::table('enrollment')
+            ->where('user_id', $userId)
+            ->pluck('course_id');
+
+        // pegar avaliações ativas relacionadas a matérias dos cursos do aluno
+        $avaliacoes = RecordAssessment::with('discipline')
+            ->whereIn('discipline_id', function ($query) use ($userCourses) {
+                $query->select('id')
+                    ->from('disciplines')
+                    ->whereIn('course_id', $userCourses);
+            })
+            ->whereDate('primary_date', '<=', now())
+            ->whereDate('end_date', '>=', now())
+            ->get();
+
+        return view('scheduling.index-scheduling', compact('avaliacoes'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+
+    public function create($assessmentId)
     {
-        $courses = Course::all();
-        $disciplines = Discipline::all();
-        return view('scheduling.create', compact('courses', 'disciplines'));
+        $assessment = RecordAssessment::with('discipline')->findOrFail($assessmentId);
+
+        return view('scheduling.crud-scheduling', compact('assessment'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        // Validação dos dados
         $request->validate([
-            'discipline_id' => 'required|integer',
-            'date' => 'required|date',
+            'assessment_id' => 'required',
+            'scheduling' => 'required|date',
+            'address' => 'required',
+            'neighborhood' => 'required',
         ]);
 
-        try {
-            // Criar novo agendamento
-            $scheduling = new Scheduling();
-            $scheduling->user_id = auth()->id(); // ID do professor logado
-            $scheduling->discipline_id = $request->discipline_id;
-            
-            // Combinar data com um horário padrão (será definido pelo aluno depois)
-            $scheduling->scheduling = $request->date . ' 00:00:00';
-            
-            // Campos opcionais que podem ser preenchidos pelo aluno depois
-            $scheduling->address = null;
-            $scheduling->neighborhood = null;
-            
-            $scheduling->save();
+        $assessment = RecordAssessment::with('discipline')->find($request->assessment_id);
 
-            return redirect()->route('scheduling.index')
-                ->with('success', 'Avaliação registrada com sucesso! Os alunos poderão escolher horário e local.');
-                
-        } catch (\Exception $e) {
-            return redirect()->back()
-                ->with('error', 'Erro ao registrar avaliação: ' . $e->getMessage())
-                ->withInput();
+        if (!($request->scheduling >= $assessment->primary_date &&
+            $request->scheduling <= $assessment->end_date))
+        {
+            return back()->with('alert', [
+                'icon' => 'error',
+                'title' => 'A data escolhida está fora do período permitido.'
+            ]);
         }
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Scheduling $scheduling)
-    {
-        return view('scheduling.show', compact('scheduling'));
-    }
+        Scheduling::create([
+            'user_id' => auth()->id(),
+            'discipline_id' => $assessment->discipline_id,
+            'scheduling' => $request->scheduling,
+            'address' => $request->address,
+            'neighborhood' => $request->neighborhood,
+        ]);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Scheduling $scheduling)
-    {
-        $courses = Course::all();
-        $disciplines = Discipline::all();
-        return view('scheduling.edit', compact('scheduling', 'courses', 'disciplines'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Scheduling $scheduling)
-    {
-        // Validação será implementada depois
-        $scheduling->update($request->all());
-
-        return redirect()->route('scheduling.index')->with('success', 'Avaliação atualizada com sucesso!');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Scheduling $scheduling)
-    {
-        $scheduling->delete();
-        return redirect()->route('scheduling.index')->with('success', 'Avaliação removida com sucesso!');
+        return redirect()->route('student.scheduling.index')->with('alert', [
+            'icon' => 'success',
+            'title' => 'Prova agendada com sucesso!'
+        ]);
     }
 }

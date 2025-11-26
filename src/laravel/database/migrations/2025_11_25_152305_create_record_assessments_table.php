@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('record_assessments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('discipline_id')->constrained('disciplines')->onDelete('cascade');
+            $table->integer('type_test')->default(1);
             $table->date('primary_date');
             $table->date('end_date');
-            $table->string('hours');
             $table->timestamps();
         });
     }

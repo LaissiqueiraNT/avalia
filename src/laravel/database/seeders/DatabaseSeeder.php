@@ -24,22 +24,22 @@ class DatabaseSeeder extends Seeder
             'email' => 'laissiqueira366@gmail.com',
             'password' => bcrypt('Lais12345678@#'),
             'ra' => 'E34534',
-            'type_user' => 1,
+            'type_user' => 1, //professor
         ]);
         User::factory()->create([
             'name' => 'Felipe',
             'email' => 'finkungalves@gmail.com',
             'password' => bcrypt('Felipe12345678@#'),
             'ra' => 'E67567',
-            'type_user' => 1,
+            'type_user' => 1, //professor
         ]);
         User::factory()->create([
             'name' => 'Lucas',
-            'email' => 'lucasantosfelicio@gmail.com',
             'password' => bcrypt('Lucas12345678@#'),
             'ra' => 'E324234',
-            'type_user' => 1,
+            'type_user' => 2,  //aluno
         ]);
+
         $faker = Faker::create('pt_BR');
 
         for ($i = 0; $i < 10; $i++) {
