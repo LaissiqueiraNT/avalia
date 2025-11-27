@@ -243,7 +243,7 @@ return [
     // ],
     [
         'text' => 'Resultado',
-        'url'  => '#',
+        'url'  => 'results',
         'can'  => 'isStudent',
         'icon' => 'fas fa-book',
 

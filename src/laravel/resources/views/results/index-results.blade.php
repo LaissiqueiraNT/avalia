@@ -49,21 +49,9 @@
 @endsection
 
 @section('content')
-<div class="scheduling-list">
+<div class="results-list">
 
-    @foreach ($avaliacoes as $a)
-        <div class="scheduling-card">
-            <h3 style="color:#fff">{{ $a->discipline->name }}</h3>
-            <p><strong>Período:</strong>  
-               {{ \Carbon\Carbon::parse($a->primary_date)->format('d/m') }} —
-               {{ \Carbon\Carbon::parse($a->end_date)->format('d/m') }}
-            </p>
-
-            <a href="{{ route('student.scheduling.create', $a->id) }}">
-                <button class="btn-schedule">Agendar prova</button>
-            </a>
-        </div>
-    @endforeach
+   
 
 </div>
 
