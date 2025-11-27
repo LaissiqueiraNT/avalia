@@ -3,9 +3,11 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ResultsController;
+use App\Http\Controllers\SchedulingController;
+use App\Http\Controllers\CorrectQuestionsController;
 use App\Http\Controllers\RecordAssessmentsController;
 use App\Http\Controllers\Auth\LoginAcademicController;
-use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 
 Route::redirect('/', '/auth-academic');
@@ -28,6 +30,11 @@ Route::get('/dashboard', [HomeController::class, 'index'])
 Route::resource('record-assessments', RecordAssessmentsController::class)
     ->middleware('auth');
 
+  Route::get('results', [ResultsController::class, 'index'])
+    ->middleware('auth');
+    
+  Route::get('correct-questions', [CorrectQuestionsController::class, 'index'])
+    ->middleware('auth');
 
 Auth::routes();
 

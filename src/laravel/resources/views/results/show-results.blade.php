@@ -79,43 +79,13 @@
 
 <div class="modal-card">
 
-    <h2 style="text-align:center; margin-bottom:20px;">
-        {{ $assessment->discipline->name }}  
-        ({{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m') }} -
-         {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m') }})
-    </h2>
+    
 
-    <form action="{{ route('student.scheduling.store') }}" method="POST">
-        @csrf
-
-        <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
-
-        <label>Selecione a data:</label>
-        <input type="date" name="scheduling">
-
-        <label style="margin-top:15px;">Endereço:</label>
-        <input type="text" name="address" placeholder="Ex: Rua X, Nº 123">
-
-        <label style="margin-top:15px;">Bairro:</label>
-        <input type="text" name="neighborhood" placeholder="Ex: Centro">
-
-        <button class="btn-save">Agendar</button>
-    </form>
+   
 
 </div>
 
-@if ($errors->any())
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Algumas informações estão faltando',
-            html: `{!! implode('<br>', $errors->all()) !!}`,
-            confirmButtonColor: '#0FAB93',
-            background: '#12151f',
-            color: '#fff',
-        });
-    </script>
-@endif
+
 
 @if (session('alert'))
 <script>
