@@ -247,7 +247,14 @@ return [
         'can'  => 'isStudent',
         'icon' => 'fas fa-book',
 
-    ],[
+    ],
+    [
+        'text' => 'Minhas Avaliações',
+        'url'  => 'student/assessments',
+        'can'  => 'isStudent',
+        'icon' => 'fas fa-calendar-check',
+    ],
+    [
         'text' => 'Avaliação',
         'url'  => 'scheduling',
         'can'  => 'isStudent',

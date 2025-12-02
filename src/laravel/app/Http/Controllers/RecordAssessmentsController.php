@@ -43,6 +43,7 @@ class RecordAssessmentsController extends Controller
             'type_test' => 'required',
             'primary_date' => 'required|date',
             'end_date' => 'required|date',
+            'hours' => 'nullable|integer|min:1|max:8',
         ]);
 
         RecordAssessment::create([
@@ -50,6 +51,7 @@ class RecordAssessmentsController extends Controller
             'type_test' => $request->type_test,
             'primary_date' => $request->primary_date,
             'end_date' => $request->end_date,
+            'hours' => $request->hours ?? 2, // Padrão 2 horas se não informado
         ]);
 
         return redirect()->route('record-assessments.index')
@@ -96,6 +98,7 @@ class RecordAssessmentsController extends Controller
             'type_test' => 'required',
             'primary_date' => 'required|date',
             'end_date' => 'required|date',
+            'hours' => 'nullable|integer|min:1|max:8',
         ]);
 
         $recordAssessment = RecordAssessment::find($id);
@@ -104,6 +107,7 @@ class RecordAssessmentsController extends Controller
             'type_test' => $request->type_test,
             'primary_date' => $request->primary_date,
             'end_date' => $request->end_date,
+            'hours' => $request->hours ?? 2,
         ]);
 
         return redirect()->route('record-assessments.index')

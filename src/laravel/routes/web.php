@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\SchedulingController;
+use App\Http\Controllers\StudentAssessmentController;
 use App\Http\Controllers\CorrectQuestionsController;
 use App\Http\Controllers\RecordAssessmentsController;
 use App\Http\Controllers\Auth\LoginAcademicController;
@@ -56,4 +57,12 @@ Route::prefix('scheduling')->middleware('auth')->group(function () {
 
     Route::post('/store', [SchedulingController::class, 'store'])
         ->name('scheduling.store');
+});
+
+// Módulo de Avaliações para Alunos
+Route::prefix('student/assessments')->middleware('auth')->name('student.assessments.')->group(function () {
+    Route::get('/', [StudentAssessmentController::class, 'index'])->name('index');
+    Route::get('/schedule/{assessment}', [StudentAssessmentController::class, 'schedule'])->name('schedule');
+    Route::post('/store', [StudentAssessmentController::class, 'store'])->name('store');
+    Route::delete('/cancel/{scheduling}', [StudentAssessmentController::class, 'cancel'])->name('cancel');
 });

@@ -77,7 +77,8 @@
         }
 
         select,
-        input[type="date"] {
+        input[type="date"],
+        input[type="number"] {
             background: var(--low-dark);
             border: none;
             color: #fff;
@@ -188,6 +189,14 @@
                         <input type="date" name="end_date"
        value="{{ old('end_date', $edit->end_date ?? '') }}">
 
+                    </div>
+                </div>
+                <div class="assessment-row">
+                    <div class="assessment-field">
+                        <label>Duração da Prova (horas):</label>
+                        <input type="number" name="hours" min="1" max="8" 
+                               value="{{ old('hours', $edit->hours ?? '') }}"
+                               placeholder="Ex: 2">
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; width: 100%;">
