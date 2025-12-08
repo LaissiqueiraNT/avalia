@@ -150,6 +150,52 @@
             color: #fff;
         }
 
+        .btn-do-exam {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-do-exam:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .btn-view-result {
+            background: #28a745;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-view-result:hover {
+            background: #218838;
+            color: #fff;
+            text-decoration: none;
+        }
+
         .no-assessments {
             text-align: center;
             color: #aaa;
@@ -195,7 +241,7 @@
 
                             <div class="info-item">
                                 <span class="info-label">Tipo de Avaliação</span>
-                                <span class="badge-type">{{ $assessment::TEST_TYPES[$assessment->type_test] }}</span>
+                                <span class="badge-type">{{ $assessment::TEST_TYPES[$assessment->type_test] ?? 'Prova' }}</span>
                             </div>
 
                             <div class="info-item">
@@ -245,26 +291,49 @@
                             <div class="info-item">
                                 <span class="info-label">Status</span>
                                 <span class="info-value">
-                                    @if(\Carbon\Carbon::parse($scheduling->scheduling)->isFuture())
-                                        <span style="color: var(--primary-green);">Agendado</span>
-                                    @elseif(\Carbon\Carbon::parse($scheduling->scheduling)->isToday())
-                                        <span style="color: #f39c12;">Hoje</span>
+                                    @php
+                                        $examDate = \Carbon\Carbon::parse($scheduling->scheduling);
+                                        $now = \Carbon\Carbon::now();
+                                        $hasResult = DB::table('disc_sched')
+                                            ->where('user_id', auth()->id())
+                                            ->where('discipline_id', $scheduling->discipline_id)
+                                            ->where('scheduling', $scheduling->scheduling)
+                                            ->whereNotNull('score')
+                                            ->exists();
+                                    @endphp
+                                    
+                                    @if($hasResult)
+                                        <span style="color: #28a745;">✓ Prova Realizada</span>
+                                    @elseif($examDate->isFuture())
+                                        <span style="color: var(--primary-green);">⏰ Agendado</span>
+                                    @elseif($examDate->isToday() || $examDate->isPast())
+                                        <span style="color: #f39c12;">📝 Disponível para realizar</span>
                                     @else
                                         <span style="color: #95a5a6;">Realizado</span>
                                     @endif
                                 </span>
                             </div>
 
-                            @if(\Carbon\Carbon::parse($scheduling->scheduling)->isFuture() && !\Carbon\Carbon::parse($scheduling->scheduling)->isPast())
-                                <div class="info-item">
+                            <div class="info-item">
+                                @if($hasResult)
+                                    <a href="{{ route('student.exam.result', $scheduling->id) }}" class="btn-view-result">
+                                        <i class="fas fa-eye"></i> Ver Resultado
+                                    </a>
+                                @elseif($examDate->isToday() || ($examDate->isPast() && !$hasResult))
+                                    <a href="{{ route('student.exam.show', $scheduling->id) }}" class="btn-do-exam">
+                                        <i class="fas fa-pencil-alt"></i> Fazer Prova
+                                    </a>
+                                @elseif($examDate->isFuture())
                                     <form action="{{ route('student.assessments.cancel', $scheduling->id) }}" method="POST" 
-                                          onsubmit="return confirm('Tem certeza que deseja cancelar este agendamento? A avaliação voltará a aparecer como disponível.')">
+                                          onsubmit="return confirmCancel(event, this)">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-cancel">Cancelar</button>
+                                        <button type="submit" class="btn-cancel">
+                                            <i class="fas fa-times"></i> Cancelar
+                                        </button>
                                     </form>
-                                </div>
-                            @endif
+                                @endif
+                            </div>
                         </div>
                     </div>
                 @endforeach

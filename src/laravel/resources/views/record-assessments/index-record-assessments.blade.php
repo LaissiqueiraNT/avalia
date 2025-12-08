@@ -193,6 +193,7 @@
                 confirmButtonColor: '#0FAB93',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Sim, excluir',
+                cancelButtonText: 'Cancelar',
                 background: '#12151f',
                 color: '#fff',
             }).then((result) => {

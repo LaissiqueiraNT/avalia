@@ -22,19 +22,24 @@ class StudentAssessmentController extends Controller
             ->orderBy('scheduling', 'desc')
             ->get();
 
-        // IDs de disciplinas que o aluno já agendou (ainda não realizadas)
-        $scheduledDisciplineIds = $mySchedulings
-            ->filter(function($scheduling) {
-                return Carbon::parse($scheduling->scheduling)->isFuture();
-            })
+        // IDs de disciplinas que o aluno já agendou
+        $scheduledDisciplineIds = $mySchedulings->pluck('discipline_id')->toArray();
+
+        // IDs de disciplinas que o aluno já realizou a prova
+        $completedDisciplineIds = \DB::table('disc_sched')
+            ->where('user_id', $userId)
+            ->whereNotNull('score')
             ->pluck('discipline_id')
             ->toArray();
 
+        // Combinar disciplinas agendadas e completadas
+        $excludedDisciplineIds = array_unique(array_merge($scheduledDisciplineIds, $completedDisciplineIds));
+
         // Buscar avaliações disponíveis (dentro do período) 
-        // EXCLUINDO aquelas que o aluno já agendou
+        // EXCLUINDO aquelas que o aluno já agendou ou já fez
         $availableAssessments = RecordAssessment::with('discipline')
             ->where('end_date', '>=', Carbon::today())
-            ->whereNotIn('discipline_id', $scheduledDisciplineIds)
+            ->whereNotIn('discipline_id', $excludedDisciplineIds)
             ->get();
 
         return view('student-assessments.index', compact('availableAssessments', 'mySchedulings'));
@@ -87,17 +92,31 @@ class StudentAssessmentController extends Controller
             ])->withInput();
         }
 
-        // Verificar se o aluno já agendou esta avaliação
+        // Verificar se o aluno já agendou esta avaliação (qualquer data)
         $existingScheduling = Scheduling::where('user_id', auth()->id())
             ->where('discipline_id', $assessment->discipline_id)
-            ->whereDate('scheduling', $request->scheduling_date)
             ->first();
 
         if ($existingScheduling) {
             return back()->with('alert', [
                 'icon' => 'warning',
                 'title' => 'Agendamento duplicado',
-                'text' => 'Você já possui um agendamento para esta disciplina nesta data.'
+                'text' => 'Você já possui um agendamento para esta disciplina.'
+            ])->withInput();
+        }
+
+        // Verificar se já fez esta prova
+        $hasCompleted = \DB::table('disc_sched')
+            ->where('user_id', auth()->id())
+            ->where('discipline_id', $assessment->discipline_id)
+            ->whereNotNull('score')
+            ->exists();
+
+        if ($hasCompleted) {
+            return back()->with('alert', [
+                'icon' => 'info',
+                'title' => 'Prova já realizada',
+                'text' => 'Você já realizou a prova desta disciplina.'
             ])->withInput();
         }
 
