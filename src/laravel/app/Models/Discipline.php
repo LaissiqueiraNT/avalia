@@ -24,4 +24,9 @@ class Discipline extends Model
     {
         return $this->belongsToMany(Scheduling::class, 'disc_sched', 'discipline_id', 'scheduling_id');
     }
+    
+    public function recordAssessments()
+    {
+        return $this->hasMany(RecordAssessment::class, 'discipline_id');
+    }
 }

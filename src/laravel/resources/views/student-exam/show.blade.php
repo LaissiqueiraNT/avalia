@@ -9,7 +9,7 @@
 @section('content')
 <div class="card" style="background: var(--medium-dark); border: 1px solid #0FAB93;">
     <div class="card-header" style="background: #0FAB93; color: #fff;">
-        <h3 class="card-title" style="color: #fff;">
+        <h3 class="card-title mb-0" style="color: #fff;">
             <i class="fas fa-clipboard-check"></i> 
             Prova de {{ $scheduling->discipline->name }}
         </h3>
@@ -140,6 +140,11 @@
     
     .custom-radio {
         margin-bottom: 12px;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
 
     /* SweetAlert customização */

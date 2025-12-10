@@ -16,30 +16,25 @@ class StudentAssessmentController extends Controller
     {
         $userId = auth()->id();
         
-        // Buscar agendamentos já feitos pelo aluno
-        $mySchedulings = Scheduling::with(['discipline'])
+        // Buscar agendamentos já feitos pelo aluno (com assessment vinculado)
+        $mySchedulings = Scheduling::with(['discipline', 'assessment'])
             ->where('user_id', $userId)
+            ->whereNotNull('assessment_id') // Apenas agendamentos com avaliação vinculada
             ->orderBy('scheduling', 'desc')
             ->get();
 
-        // IDs de disciplinas que o aluno já agendou
-        $scheduledDisciplineIds = $mySchedulings->pluck('discipline_id')->toArray();
-
-        // IDs de disciplinas que o aluno já realizou a prova
-        $completedDisciplineIds = \DB::table('disc_sched')
-            ->where('user_id', $userId)
-            ->whereNotNull('score')
+        // IDs de disciplinas que o aluno já agendou (independente se fez ou não)
+        // Removemos da lista de disponíveis TODAS as disciplinas já agendadas
+        $scheduledDisciplineIds = $mySchedulings
             ->pluck('discipline_id')
+            ->unique()
             ->toArray();
 
-        // Combinar disciplinas agendadas e completadas
-        $excludedDisciplineIds = array_unique(array_merge($scheduledDisciplineIds, $completedDisciplineIds));
-
         // Buscar avaliações disponíveis (dentro do período) 
-        // EXCLUINDO aquelas que o aluno já agendou ou já fez
+        // EXCLUINDO todas as disciplinas que o aluno já tem agendamento
         $availableAssessments = RecordAssessment::with('discipline')
             ->where('end_date', '>=', Carbon::today())
-            ->whereNotIn('discipline_id', $excludedDisciplineIds)
+            ->whereNotIn('discipline_id', $scheduledDisciplineIds)
             ->get();
 
         return view('student-assessments.index', compact('availableAssessments', 'mySchedulings'));
@@ -92,45 +87,54 @@ class StudentAssessmentController extends Controller
             ])->withInput();
         }
 
-        // Verificar se o aluno já agendou esta avaliação (qualquer data)
-        $existingScheduling = Scheduling::where('user_id', auth()->id())
+        // Verificar se o aluno já tem um agendamento ATIVO (ainda não realizado) para esta disciplina
+        $existingSchedulings = Scheduling::where('user_id', auth()->id())
             ->where('discipline_id', $assessment->discipline_id)
-            ->first();
+            ->get();
 
-        if ($existingScheduling) {
-            return back()->with('alert', [
-                'icon' => 'warning',
-                'title' => 'Agendamento duplicado',
-                'text' => 'Você já possui um agendamento para esta disciplina.'
-            ])->withInput();
-        }
-
-        // Verificar se já fez esta prova
-        $hasCompleted = \DB::table('disc_sched')
-            ->where('user_id', auth()->id())
-            ->where('discipline_id', $assessment->discipline_id)
-            ->whereNotNull('score')
-            ->exists();
-
-        if ($hasCompleted) {
-            return back()->with('alert', [
-                'icon' => 'info',
-                'title' => 'Prova já realizada',
-                'text' => 'Você já realizou a prova desta disciplina.'
-            ])->withInput();
+        foreach ($existingSchedulings as $scheduling) {
+            // Verificar se já completou essa tentativa pelo scheduling_id
+            $completed = \DB::table('disc_sched')
+                ->where('scheduling_id', $scheduling->id)
+                ->where('user_id', auth()->id())
+                ->whereNotNull('score')
+                ->exists();
+            
+            // Se existe um agendamento que ainda não foi completado, não permitir
+            if (!$completed) {
+                return back()->with('alert', [
+                    'icon' => 'warning',
+                    'title' => 'Agendamento ativo encontrado',
+                    'text' => 'Você já possui um agendamento pendente para esta disciplina.'
+                ])->withInput();
+            }
         }
 
         Scheduling::create([
             'user_id' => auth()->id(),
             'discipline_id' => $assessment->discipline_id,
+            'assessment_id' => $assessment->id, // Vincular à avaliação específica
             'scheduling' => $schedulingDateTime,
         ]);
+
+        // Formatar duração
+        $totalMinutes = $assessment->hours ?? 120;
+        $hours = floor($totalMinutes / 60);
+        $minutes = $totalMinutes % 60;
+        $duration = '';
+        if ($hours > 0) {
+            $duration .= $hours . 'h';
+        }
+        if ($minutes > 0) {
+            $duration .= ($hours > 0 ? ' e ' : '') . $minutes . 'min';
+        }
+        $duration = $duration ?: '2h';
 
         return redirect()->route('student.assessments.index')
             ->with('alert', [
                 'icon' => 'success',
                 'title' => 'Agendamento realizado!',
-                'text' => 'Sua prova foi agendada para ' . $schedulingDateTime->format('d/m/Y às H:i') . '. Duração: 1 hora.'
+                'text' => 'Sua prova foi agendada para ' . $schedulingDateTime->format('d/m/Y às H:i') . '. Duração: ' . $duration . '.'
             ]);
     }
 

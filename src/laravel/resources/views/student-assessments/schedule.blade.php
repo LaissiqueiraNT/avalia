@@ -242,7 +242,19 @@
                        name="scheduling_time"
                        required>
                 <div class="help-text">
-                    A prova terá duração de 1 hora
+                    @php
+                        $totalMinutes = $assessment->hours ?? 120;
+                        $hours = floor($totalMinutes / 60);
+                        $minutes = $totalMinutes % 60;
+                        $duration = '';
+                        if ($hours > 0) {
+                            $duration .= $hours . 'h';
+                        }
+                        if ($minutes > 0) {
+                            $duration .= ($hours > 0 ? ' e ' : '') . $minutes . 'min';
+                        }
+                    @endphp
+                    A prova terá duração de {{ $duration ?: '2h' }}
                 </div>
             </div>
 

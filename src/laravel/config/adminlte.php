@@ -230,10 +230,10 @@ return [
         'icon' => 'fas fa-pen',
     ],
     [
-        'text' => 'Corrigir Questões',
-        'url'  => 'correct-questions',
+        'text' => 'Visualizar Notas',
+        'url'  => 'grades',
         'can'  => 'isTeacher',
-        'icon' => 'fas fa-check-circle',
+        'icon' => 'fas fa-chart-bar',
     ],
     // [
     //     'text' => 'Início',
@@ -246,19 +246,6 @@ return [
         'url'  => 'student/assessments',
         'can'  => 'isStudent',
         'icon' => 'fas fa-calendar-check',
-    ],
-    [
-        'text' => 'Resultado',
-        'url'  => 'results',
-        'can'  => 'isStudent',
-        'icon' => 'fas fa-chart-bar',
-    ],
-    [
-        'text' => 'Avaliação',
-        'url'  => 'scheduling',
-        'can'  => 'isStudent',
-        'icon' => 'fas fa-file-invoice',
-
     ],
 ],
 

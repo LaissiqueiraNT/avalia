@@ -73,3 +73,9 @@ Route::prefix('student/exam')->middleware('auth')->name('student.exam.')->group(
     Route::post('/{scheduling}/submit', [\App\Http\Controllers\StudentExamController::class, 'submit'])->name('submit');
     Route::get('/{scheduling}/result', [\App\Http\Controllers\StudentExamController::class, 'result'])->name('result');
 });
+
+// Módulo de Notas para Professores
+Route::prefix('grades')->middleware('auth')->name('grades.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\GradesController::class, 'index'])->name('index');
+    Route::get('/{discipline}', [\App\Http\Controllers\GradesController::class, 'show'])->name('show');
+});

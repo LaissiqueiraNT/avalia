@@ -48,7 +48,13 @@ class HomeController extends Controller
         $mySchedulings = Scheduling::with(['discipline'])
             ->where('user_id', $user->id)
             ->orderBy('scheduling', 'asc')
-            ->get();
+            ->get()
+            ->filter(function($scheduling) {
+                // Verificar se a avaliação ainda existe no sistema
+                return \DB::table('record_assessments')
+                    ->where('discipline_id', $scheduling->discipline_id)
+                    ->exists();
+            });
         
         return view('student-dashboard', compact('mySchedulings'));
     }

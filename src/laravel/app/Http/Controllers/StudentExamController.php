@@ -16,17 +16,26 @@ class StudentExamController extends Controller
      */
     public function show($schedulingId)
     {
-        $scheduling = Scheduling::with(['discipline'])->findOrFail($schedulingId);
+        $scheduling = Scheduling::with(['discipline', 'assessment'])->findOrFail($schedulingId);
         
         // Verificar se é o aluno dono do agendamento
         if ($scheduling->user_id !== auth()->id()) {
             abort(403, 'Você não tem permissão para acessar esta prova.');
         }
 
-        // Verificar se já fez a prova (buscar pela combinação user_id + discipline_id + scheduling date)
-        $existingResult = DiscSched::where('user_id', auth()->id())
-            ->where('discipline_id', $scheduling->discipline_id)
-            ->where('scheduling', $scheduling->scheduling)
+        // Verificar se o agendamento tem uma avaliação vinculada
+        if (!$scheduling->assessment) {
+            return redirect()->route('student.assessments.index')
+                ->with('alert', [
+                    'icon' => 'error',
+                    'title' => 'Avaliação não encontrada',
+                    'text' => 'Esta prova não está mais disponível.'
+                ]);
+        }
+
+        // Verificar se já fez a prova (verificar pelo scheduling_id específico)
+        $existingResult = DiscSched::where('scheduling_id', $schedulingId)
+            ->where('user_id', auth()->id())
             ->whereNotNull('score')
             ->first();
 
@@ -76,10 +85,9 @@ class StudentExamController extends Controller
             abort(403, 'Você não tem permissão para submeter esta prova.');
         }
 
-        // Verificar se já fez a prova
-        $existingResult = DiscSched::where('user_id', auth()->id())
-            ->where('discipline_id', $scheduling->discipline_id)
-            ->where('scheduling', $scheduling->scheduling)
+        // Verificar se já fez a prova (pelo scheduling_id)
+        $existingResult = DiscSched::where('scheduling_id', $schedulingId)
+            ->where('user_id', auth()->id())
             ->whereNotNull('score')
             ->first();
 
@@ -109,11 +117,12 @@ class StudentExamController extends Controller
         // Atualizar ou criar o registro em disc_sched com a nota
         DiscSched::updateOrCreate(
             [
+                'scheduling_id' => $schedulingId,
                 'user_id' => auth()->id(),
-                'discipline_id' => $scheduling->discipline_id,
-                'scheduling' => $scheduling->scheduling,
             ],
             [
+                'discipline_id' => $scheduling->discipline_id,
+                'scheduling' => $scheduling->scheduling,
                 'score' => $totalScore,
                 'address' => $scheduling->address ?? null,
                 'neighborhood' => $scheduling->neighborhood ?? null,
@@ -136,10 +145,9 @@ class StudentExamController extends Controller
             abort(403, 'Você não tem permissão para ver este resultado.');
         }
 
-        // Buscar o resultado
-        $result = DiscSched::where('user_id', auth()->id())
-            ->where('discipline_id', $scheduling->discipline_id)
-            ->where('scheduling', $scheduling->scheduling)
+        // Buscar o resultado pelo scheduling_id
+        $result = DiscSched::where('scheduling_id', $schedulingId)
+            ->where('user_id', auth()->id())
             ->whereNotNull('score')
             ->firstOrFail();
 

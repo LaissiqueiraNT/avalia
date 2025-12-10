@@ -274,6 +274,20 @@
             
             @if($mySchedulings->count() > 0)
                 @foreach($mySchedulings as $scheduling)
+                    @php
+                        // Verificar se o agendamento tem avaliação vinculada
+                        if (!$scheduling->assessment) {
+                            continue; // Pular agendamentos sem avaliação
+                        }
+
+                        // Verificar pelo scheduling_id específico
+                        $hasResult = DB::table('disc_sched')
+                            ->where('scheduling_id', $scheduling->id)
+                            ->where('user_id', auth()->id())
+                            ->whereNotNull('score')
+                            ->exists();
+                    @endphp
+
                     <div class="assessment-card">
                         <div class="assessment-info">
                             <div class="info-item">
@@ -291,25 +305,10 @@
                             <div class="info-item">
                                 <span class="info-label">Status</span>
                                 <span class="info-value">
-                                    @php
-                                        $examDate = \Carbon\Carbon::parse($scheduling->scheduling);
-                                        $now = \Carbon\Carbon::now();
-                                        $hasResult = DB::table('disc_sched')
-                                            ->where('user_id', auth()->id())
-                                            ->where('discipline_id', $scheduling->discipline_id)
-                                            ->where('scheduling', $scheduling->scheduling)
-                                            ->whereNotNull('score')
-                                            ->exists();
-                                    @endphp
-                                    
                                     @if($hasResult)
                                         <span style="color: #28a745;">✓ Prova Realizada</span>
-                                    @elseif($examDate->isFuture())
-                                        <span style="color: var(--primary-green);">⏰ Agendado</span>
-                                    @elseif($examDate->isToday() || $examDate->isPast())
-                                        <span style="color: #f39c12;">📝 Disponível para realizar</span>
                                     @else
-                                        <span style="color: #95a5a6;">Realizado</span>
+                                        <span style="color: #f39c12; font-size: 16px;">📝 Disponível para realizar</span>
                                     @endif
                                 </span>
                             </div>
@@ -319,19 +318,10 @@
                                     <a href="{{ route('student.exam.result', $scheduling->id) }}" class="btn-view-result">
                                         <i class="fas fa-eye"></i> Ver Resultado
                                     </a>
-                                @elseif($examDate->isToday() || ($examDate->isPast() && !$hasResult))
+                                @else
                                     <a href="{{ route('student.exam.show', $scheduling->id) }}" class="btn-do-exam">
                                         <i class="fas fa-pencil-alt"></i> Fazer Prova
                                     </a>
-                                @elseif($examDate->isFuture())
-                                    <form action="{{ route('student.assessments.cancel', $scheduling->id) }}" method="POST" 
-                                          onsubmit="return confirmCancel(event, this)">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-cancel">
-                                            <i class="fas fa-times"></i> Cancelar
-                                        </button>
-                                    </form>
                                 @endif
                             </div>
                         </div>
@@ -347,6 +337,7 @@
 @endsection
 
 @section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @if(session('alert'))
         <script>
             Swal.fire({

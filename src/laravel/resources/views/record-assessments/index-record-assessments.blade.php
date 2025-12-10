@@ -153,6 +153,7 @@
                     <th>Matéria</th>
                     <th>Data Início</th>
                     <th>Data Final</th>
+                    <th>Duração</th>
                     <th>Ações</th>
                 </tr>
             </thead>
@@ -164,6 +165,21 @@
                         <td>{{ $a->discipline->name ?? '—' }}</td>
                         <td>{{ \Carbon\Carbon::parse($a->primary_date)->format('d/m/Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($a->end_date)->format('d/m/Y') }}</td>
+                        <td>
+                            @php
+                                $totalMinutes = $a->hours ?? 120;
+                                $hours = floor($totalMinutes / 60);
+                                $minutes = $totalMinutes % 60;
+                                $duration = '';
+                                if ($hours > 0) {
+                                    $duration .= $hours . 'h';
+                                }
+                                if ($minutes > 0) {
+                                    $duration .= ($hours > 0 ? ' ' : '') . $minutes . 'min';
+                                }
+                                echo $duration ?: '2h';
+                            @endphp
+                        </td>
                         <td>
                             <div class="btn-actions">
                                 <a href="{{ route('record-assessments.edit', $a->id) }}" class="btn-edit">Editar</a>

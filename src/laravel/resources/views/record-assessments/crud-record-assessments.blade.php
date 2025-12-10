@@ -142,7 +142,8 @@
         <div class="assessment-inner-card">
             <form
                 action="{{ isset($edit) ? route('record-assessments.update', $edit->id) : route('record-assessments.store') }}"
-                method="POST">
+                method="POST"
+                id="assessmentForm">
                 @csrf
                 @if (isset($edit))
                     @method('PUT')
@@ -193,14 +194,25 @@
                 </div>
                 <div class="assessment-row">
                     <div class="assessment-field">
-                        <label>Duração da Prova (horas):</label>
-                        <input type="number" name="hours" min="1" max="8" 
-                               value="{{ old('hours', $edit->hours ?? '') }}"
-                               placeholder="Ex: 2">
+                        <label>Duração da Prova:</label>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 13px; color: #aaa; margin-bottom: 5px;">Horas</label>
+                                <input type="number" name="hours" min="0" max="8" 
+                                       value="{{ old('hours', isset($edit->hours) ? floor($edit->hours / 60) : '') }}"
+                                       placeholder="0" style="width: 100%;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 13px; color: #aaa; margin-bottom: 5px;">Minutos</label>
+                                <input type="number" name="minutes" min="0" max="59" 
+                                       value="{{ old('minutes', isset($edit->hours) ? ($edit->hours % 60) : '') }}"
+                                       placeholder="0" style="width: 100%;">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: flex-end; width: 100%;">
-                    <button class="btn-register">Registrar</button>
+                    <button type="submit" class="btn-register" id="submitBtn">Registrar</button>
                 </div>
                 @if ($errors->any())
                     <script>
@@ -219,4 +231,26 @@
         </div>
     </div>
 
+@endsection
+
+@section('js')
+<script>
+    // Prevenir múltiplos envios do formulário
+    const form = document.getElementById('assessmentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    let isSubmitting = false;
+
+    form.addEventListener('submit', function(e) {
+        if (isSubmitting) {
+            e.preventDefault();
+            return false;
+        }
+        
+        isSubmitting = true;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processando...';
+        submitBtn.style.opacity = '0.6';
+        submitBtn.style.cursor = 'not-allowed';
+    });
+</script>
 @endsection
