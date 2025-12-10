@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ResultsController;
 use App\Http\Controllers\SchedulingController;
+use App\Http\Controllers\StudentAssessmentController;
 use App\Http\Controllers\CorrectQuestionsController;
 use App\Http\Controllers\RecordAssessmentsController;
 use App\Http\Controllers\Auth\LoginAcademicController;
@@ -56,4 +57,25 @@ Route::prefix('scheduling')->middleware('auth')->group(function () {
 
     Route::post('/store', [SchedulingController::class, 'store'])
         ->name('scheduling.store');
+});
+
+// Módulo de Avaliações para Alunos
+Route::prefix('student/assessments')->middleware('auth')->name('student.assessments.')->group(function () {
+    Route::get('/', [StudentAssessmentController::class, 'index'])->name('index');
+    Route::get('/schedule/{assessment}', [StudentAssessmentController::class, 'schedule'])->name('schedule');
+    Route::post('/store', [StudentAssessmentController::class, 'store'])->name('store');
+    Route::delete('/cancel/{scheduling}', [StudentAssessmentController::class, 'cancel'])->name('cancel');
+});
+
+// Módulo de Provas para Alunos
+Route::prefix('student/exam')->middleware('auth')->name('student.exam.')->group(function () {
+    Route::get('/{scheduling}', [\App\Http\Controllers\StudentExamController::class, 'show'])->name('show');
+    Route::post('/{scheduling}/submit', [\App\Http\Controllers\StudentExamController::class, 'submit'])->name('submit');
+    Route::get('/{scheduling}/result', [\App\Http\Controllers\StudentExamController::class, 'result'])->name('result');
+});
+
+// Módulo de Notas para Professores
+Route::prefix('grades')->middleware('auth')->name('grades.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\GradesController::class, 'index'])->name('index');
+    Route::get('/{discipline}', [\App\Http\Controllers\GradesController::class, 'show'])->name('show');
 });

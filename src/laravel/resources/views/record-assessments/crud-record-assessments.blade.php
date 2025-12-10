@@ -2,13 +2,61 @@
 
 @section('title', 'Registrar Avaliações')
 @vite(['resources/css/appcustom.css'])
- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 @section('css')
     <style>
         body {
             background: var(--backgroud-dashboard);
             min-height: 100vh;
             color: #fff;
+        }
+
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
         }
 
         .main-header.navbar {
@@ -77,7 +125,8 @@
         }
 
         select,
-        input[type="date"] {
+        input[type="date"],
+        input[type="number"] {
             background: var(--low-dark);
             border: none;
             color: #fff;
@@ -126,6 +175,17 @@
         .back-arrow:hover {
             color: var(--primary-green);
         }
+
+        input[type="date"] {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: var(--medium-dark) !important;
+            color: #fff !important;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
     </style>
 @endsection
 
@@ -141,7 +201,7 @@
         <div class="assessment-inner-card">
             <form
                 action="{{ isset($edit) ? route('record-assessments.update', $edit->id) : route('record-assessments.store') }}"
-                method="POST">
+                method="POST" id="assessmentForm">
                 @csrf
                 @if (isset($edit))
                     @method('PUT')
@@ -179,19 +239,37 @@
                     <div class="assessment-field">
                         <label>Data Início:</label>
                         <input type="date" name="primary_date"
-       value="{{ old('primary_date', $edit->primary_date ?? '') }}">
+                            value="{{ old('primary_date', $edit->primary_date ?? '') }}">
 
                     </div>
 
                     <div class="assessment-field">
                         <label>Data Final:</label>
-                        <input type="date" name="end_date"
-       value="{{ old('end_date', $edit->end_date ?? '') }}">
+                        <input type="date" name="end_date" value="{{ old('end_date', $edit->end_date ?? '') }}">
 
                     </div>
                 </div>
+                <div class="assessment-row">
+                    <div class="assessment-field">
+                        <label>Duração da Prova:</label>
+                        <div style="display: flex; gap: 15px;">
+                            <div style="flex: 1;">
+                                <label style="font-size: 13px; color: #aaa; margin-bottom: 5px;">Horas</label>
+                                <input type="number" name="hours" min="0" max="8"
+                                    value="{{ old('hours', isset($edit->hours) ? floor($edit->hours / 60) : '') }}"
+                                    placeholder="0" style="width: 100%;">
+                            </div>
+                            <div style="flex: 1;">
+                                <label style="font-size: 13px; color: #aaa; margin-bottom: 5px;">Minutos</label>
+                                <input type="number" name="minutes" min="0" max="59"
+                                    value="{{ old('minutes', isset($edit->hours) ? $edit->hours % 60 : '') }}"
+                                    placeholder="0" style="width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div style="display: flex; justify-content: flex-end; width: 100%;">
-                    <button class="btn-register">Registrar</button>
+                    <button type="submit" class="btn-register" id="submitBtn">Registrar</button>
                 </div>
                 @if ($errors->any())
                     <script>
@@ -205,9 +283,50 @@
                         });
                     </script>
                 @endif
+                @if (session('duplicate_error'))
+                    <script>
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Atenção!',
+                            text: '{{ session('duplicate_error') }}',
+                            confirmButtonColor: '#0FAB93',
+                            background: '#12151f',
+                            color: '#fff',
+                        });
+                    </script>
+                @endif
 
             </form>
         </div>
     </div>
 
+@endsection
+
+@section('js')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Prevenir múltiplos envios
+        const form = document.getElementById('assessmentForm');
+        const submitBtn = document.getElementById('submitBtn');
+        let isSubmitting = false;
+
+        form.addEventListener('submit', function(e) {
+            if (isSubmitting) {
+                e.preventDefault();
+                return false;
+            }
+
+            isSubmitting = true;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processando...';
+            submitBtn.style.opacity = '0.6';
+            submitBtn.style.cursor = 'not-allowed';
+        });
+
+        flatpickr("input[type=date]", {
+            dateFormat: "Y-m-d",
+            allowInput: true,
+        });
+    </script>
 @endsection

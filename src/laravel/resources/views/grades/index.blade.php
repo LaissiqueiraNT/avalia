@@ -1,14 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'Avaliações Registradas')
+@section('title', 'Visualizar Notas')
+
+@section('content_header')
+    <h1 style="color: #fff;">Visualizar Notas dos Alunos</h1>
+@stop
 @vite(['resources/css/appcustom.css'])
-@section('css')
+@section('content')
     <style>
-        body {
+        body,
+        .content-wrapper,
+        .main-footer {
             background: #1a252f !important;
             min-height: 100vh;
             color: #fff;
         }
+
         .dropdown-menu.show {
             background: var(--medium-dark) !important;
             border: 1px solid #333 !important;
@@ -22,16 +29,19 @@
             color: #fff !important;
             border-radius: 10px 10px 0 0 !important;
         }
+
         .user-header p {
             color: #fff !important;
             font-weight: 600;
         }
+
         .dropdown-menu .dropdown-footer,
         .user-footer {
             background: var(--medium-dark) !important;
             padding: 10px !important;
             border-radius: 0 0 10px 10px !important;
         }
+
         .dropdown-menu .dropdown-footer a,
         .user-footer .btn-default {
             background: var(--more-dark) !important;
@@ -43,6 +53,7 @@
             border: none !important;
             width: 100%;
         }
+
         .dropdown-menu .dropdown-footer a:hover,
         .user-footer .btn-default:hover {
             background: #17a589 !important;
@@ -174,93 +185,46 @@
             color: #b43527;
         }
     </style>
-@endsection
-
-@section('content')
-    <div class="assessment-main-card">
-        <h2 class="assessment-title">Avaliações Registradas</h2>
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
-            <a href="{{ route('record-assessments.create') }}" class="btn-create">
-                + Novo Registro
-            </a>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Matéria</th>
-                    <th>Data Início</th>
-                    <th>Data Final</th>
-                    <th>Duração</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach ($assessments as $a)
-                    <tr>
-                        <td>{{ $testTypes[$a->type_test] ?? '—' }}</td>
-                        <td>{{ $a->discipline->name ?? '—' }}</td>
-                        <td>{{ \Carbon\Carbon::parse($a->primary_date)->format('d/m/Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($a->end_date)->format('d/m/Y') }}</td>
-                        <td>
-                            @php
-                                $totalMinutes = $a->hours ?? 120;
-                                $hours = floor($totalMinutes / 60);
-                                $minutes = $totalMinutes % 60;
-                                $duration = '';
-                                if ($hours > 0) {
-                                    $duration .= $hours . 'h';
-                                }
-                                if ($minutes > 0) {
-                                    $duration .= ($hours > 0 ? ' ' : '') . $minutes . 'min';
-                                }
-                                echo $duration ?: '2h';
-                            @endphp
-                        </td>
-                        <td>
-                            <div class="btn-actions">
-                                <a href="{{ route('record-assessments.edit', $a->id) }}" class="btn-edit">Editar</a>
-
-                                <form action="{{ route('record-assessments.destroy', $a->id) }}" method="POST"
-                                    class="delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn-delete">Excluir</button>
-                                </form>
+    <div class="container-fluid">
+        <div class="card" style="background: #2c3e50; border: none; border-radius: 15px;">
+            <div class="card-header text-center" style="background: transparent; border: none; padding: 30px;">
+                <h2 style="color: #fff; font-weight: 600; margin: 0;">Selecione uma Disciplina</h2>
+            </div>
+            <div class="card-body" style="padding: 30px;">
+                @if ($disciplines->count() > 0)
+                    <div class="row">
+                        @foreach ($disciplines as $discipline)
+                            <div class="col-md-6 col-lg-4 mb-4">
+                                <a href="{{ route('grades.show', $discipline->id) }}" style="text-decoration: none;">
+                                    <div class="card h-100"
+                                        style="background: #34495e; border: 1px solid #0FAB93; transition: 0.3s; border-radius: 10px;">
+                                        <div class="card-body text-center" style="padding: 30px;">
+                                            <i class="fas fa-book-open fa-3x mb-3" style="color: #0FAB93;"></i>
+                                            <h5 style="color: #fff; font-weight: 600; margin-bottom: 10px;">
+                                                {{ $discipline->name }}</h5>
+                                            <p style="color: #aaa; margin: 0; font-size: 14px;">
+                                                <i class="fas fa-users"></i> Ver notas dos alunos
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
-                        </td>
-                    </tr>
-                @endforeach
-                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-                <script>
-                    document.querySelectorAll('.delete-form').forEach(form => {
-                        form.addEventListener('submit', function(e) {
-                            e.preventDefault();
-
-                            Swal.fire({
-                                title: 'Tem certeza?',
-                                text: 'Essa avaliação será removida.',
-                                icon: 'warning',
-                                showCancelButton: true,
-                                confirmButtonColor: '#0FAB93',
-                                cancelButtonColor: '#d33',
-                                confirmButtonText: 'Sim, excluir',
-                                cancelButtonText: 'Cancelar',
-                                background: '#12151f',
-                                color: '#fff',
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    form.submit();
-                                }
-                            });
-                        });
-                    });
-                </script>
-
-            </tbody>
-        </table>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-4x mb-3" style="color: #666;"></i>
+                        <p style="color: #999; font-size: 16px;">Nenhuma disciplina com avaliações registradas.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
     </div>
-@endsection
+
+    <style>
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(15, 171, 147, 0.4);
+        }
+    </style>
+@stop

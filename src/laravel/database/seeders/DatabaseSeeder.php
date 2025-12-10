@@ -57,15 +57,15 @@ class DatabaseSeeder extends Seeder
             DisciplinesSeeder::class,
             DiscCoursesSeeder::class,
             EnrollmentSeeder::class,
-            SchedulingsSeeder::class,
-            DiscSchedSeeder::class,
-            ResponsesSeeder::class,
-            QuestionsSeeder::class,
-            QuestionResponseSeeder::class,
+            // ResponsesSeeder::class, // Comentado, vamos criar dentro do QuestionsSeeder
+            QuestionsSeeder::class, // Agora cria questões + respostas + vincula disciplinas
+            // QuestionResponseSeeder::class, // Comentado, feito dentro do QuestionsSeeder
             QuestionDescriptionsSeeder::class,
-            A2Seeder::class,
+            // A2Seeder::class, // Comentado, feito dentro do QuestionsSeeder
             A3Seeder::class,
             RecordAssessmentsSeeder::class,
+            SchedulingsSeeder::class,
+            DiscSchedSeeder::class,
         ]);
     }
 }

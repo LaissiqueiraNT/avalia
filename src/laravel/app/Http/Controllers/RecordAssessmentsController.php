@@ -43,20 +43,43 @@ class RecordAssessmentsController extends Controller
             'type_test' => 'required',
             'primary_date' => 'required|date',
             'end_date' => 'required|date',
+            'hours' => 'nullable|integer|min:0|max:8',
+            'minutes' => 'nullable|integer|min:0|max:59',
         ]);
+
+        // Verificar se já existe uma avaliação igual (mesma disciplina e tipo)
+        $exists = RecordAssessment::where('discipline_id', $request->discipline_id)
+            ->where('type_test', $request->type_test)
+            ->where('primary_date', $request->primary_date)
+            ->exists();
+
+        if ($exists) {
+            return redirect()->back()
+                ->with('alert', [
+                    'icon' => 'warning',
+                    'title' => 'Avaliação duplicada',
+                    'text' => 'Já existe uma avaliação deste tipo para esta disciplina nesta data.'
+                ])
+                ->withInput();
+        }
+
+        // Calcular duração total em minutos
+        $totalMinutes = ($request->hours ?? 0) * 60 + ($request->minutes ?? 0);
+        
+        // Se não informou nada, padrão de 2 horas (120 minutos)
+        if ($totalMinutes == 0) {
+            $totalMinutes = 120;
+        }
 
         RecordAssessment::create([
             'discipline_id' => $request->discipline_id,
             'type_test' => $request->type_test,
             'primary_date' => $request->primary_date,
             'end_date' => $request->end_date,
+            'hours' => $totalMinutes,
         ]);
 
-        return redirect()->route('record-assessments.index')
-            ->with('alert', [
-                'icon' => 'success',
-                'title' => 'Avaliação criada com sucesso!',
-            ]);
+        return view('record-assessments.index-record-assessments');
     }
 
 
@@ -96,7 +119,17 @@ class RecordAssessmentsController extends Controller
             'type_test' => 'required',
             'primary_date' => 'required|date',
             'end_date' => 'required|date',
+            'hours' => 'nullable|integer|min:0|max:8',
+            'minutes' => 'nullable|integer|min:0|max:59',
         ]);
+
+        // Calcular duração total em minutos
+        $totalMinutes = ($request->hours ?? 0) * 60 + ($request->minutes ?? 0);
+        
+        // Se não informou nada, padrão de 2 horas (120 minutos)
+        if ($totalMinutes == 0) {
+            $totalMinutes = 120;
+        }
 
         $recordAssessment = RecordAssessment::find($id);
         $recordAssessment->update([
@@ -104,6 +137,7 @@ class RecordAssessmentsController extends Controller
             'type_test' => $request->type_test,
             'primary_date' => $request->primary_date,
             'end_date' => $request->end_date,
+            'hours' => $totalMinutes,
         ]);
 
         return redirect()->route('record-assessments.index')
@@ -120,13 +154,23 @@ class RecordAssessmentsController extends Controller
     public function destroy(string $id)
     {
         $recordAssessment = RecordAssessment::findOrFail($id);
+        
+        // Remover todos os agendamentos vinculados ESPECIFICAMENTE a esta avaliação
+        $deletedSchedulings = \DB::table('schedulings')
+            ->where('assessment_id', $id)
+            ->delete();
+        
+        // Remover todos os resultados relacionados a esses agendamentos específicos
+        // (já foram deletados em cascade pela foreign key)
+        
+        // Remover a avaliação (isso também vai deletar schedulings via cascade)
         $recordAssessment->delete();
 
         return redirect()->route('record-assessments.index')
             ->with('alert', [
                 'icon' => 'success',
                 'title' => 'Avaliação excluída!',
-                'text' => 'A avaliação foi removida com sucesso.'
+                'text' => "A avaliação foi removida com sucesso. {$deletedSchedulings} agendamento(s) de alunos também foram removidos."
             ]);
     }
 }

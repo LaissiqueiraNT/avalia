@@ -29,4 +29,12 @@ class Scheduling extends Model
     {
         return $this->belongsTo(Discipline::class);
     }
+
+    /**
+     * Relacionamento com a avaliação
+     */
+    public function assessment(): BelongsTo
+    {
+        return $this->belongsTo(\App\Models\RecordAssessment::class, 'assessment_id');
+    }
 }
