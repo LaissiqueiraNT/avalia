@@ -17,7 +17,11 @@ class RecordAssessmentsController extends Controller
         $testTypes = RecordAssessment::TEST_TYPES;
         $assessments = RecordAssessment::with('discipline')->get();
 
-        return view('record-assessments.index-record-assessments', compact('disciplines', 'testTypes', 'assessments'));
+        return redirect()->route('record-assessments.index')
+            ->with('alert', [
+                'icon' => 'success',
+                'title' => 'Avaliação registrada!',
+            ]);
     }
 
 
@@ -65,7 +69,7 @@ class RecordAssessmentsController extends Controller
 
         // Calcular duração total em minutos
         $totalMinutes = ($request->hours ?? 0) * 60 + ($request->minutes ?? 0);
-        
+
         // Se não informou nada, padrão de 2 horas (120 minutos)
         if ($totalMinutes == 0) {
             $totalMinutes = 120;
@@ -95,17 +99,17 @@ class RecordAssessmentsController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-{
-    $edit = RecordAssessment::find($id);
-    $disciplines = Discipline::all();
-    $testTypes = RecordAssessment::TEST_TYPES;
+    {
+        $edit = RecordAssessment::find($id);
+        $disciplines = Discipline::all();
+        $testTypes = RecordAssessment::TEST_TYPES;
 
-    return view('record-assessments.crud-record-assessments', compact(
-        'edit',
-        'disciplines',
-        'testTypes'
-    ));
-}
+        return view('record-assessments.crud-record-assessments', compact(
+            'edit',
+            'disciplines',
+            'testTypes'
+        ));
+    }
 
 
 
@@ -125,7 +129,7 @@ class RecordAssessmentsController extends Controller
 
         // Calcular duração total em minutos
         $totalMinutes = ($request->hours ?? 0) * 60 + ($request->minutes ?? 0);
-        
+
         // Se não informou nada, padrão de 2 horas (120 minutos)
         if ($totalMinutes == 0) {
             $totalMinutes = 120;
@@ -154,15 +158,15 @@ class RecordAssessmentsController extends Controller
     public function destroy(string $id)
     {
         $recordAssessment = RecordAssessment::findOrFail($id);
-        
+
         // Remover todos os agendamentos vinculados ESPECIFICAMENTE a esta avaliação
         $deletedSchedulings = \DB::table('schedulings')
             ->where('assessment_id', $id)
             ->delete();
-        
+
         // Remover todos os resultados relacionados a esses agendamentos específicos
         // (já foram deletados em cascade pela foreign key)
-        
+
         // Remover a avaliação (isso também vai deletar schedulings via cascade)
         $recordAssessment->delete();
 
