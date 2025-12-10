@@ -28,6 +28,49 @@ class DisciplinesSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Inteligência Artificial',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Engenharia de Software',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Redes de Computadores',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Sistemas Operacionais',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Estruturas de Dados',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Programação Orientada a Objetos',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Big Data e Analytics',
+                'teacher_id' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            
         ]);
     }
 }

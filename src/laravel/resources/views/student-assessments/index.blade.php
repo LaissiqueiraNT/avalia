@@ -11,6 +11,50 @@
             color: #fff;
         }
 
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
+        }
+
         .main-header.navbar {
             background-color: var(--more-dark) !important;
             border-bottom: 1px solid var(--primary-green);
@@ -229,9 +273,9 @@
         <!-- Avaliações Disponíveis para Agendar -->
         <div class="mb-5">
             <h3 class="section-title">Avaliações Disponíveis</h3>
-            
-            @if($availableAssessments->count() > 0)
-                @foreach($availableAssessments as $assessment)
+
+            @if ($availableAssessments->count() > 0)
+                @foreach ($availableAssessments as $assessment)
                     <div class="assessment-card">
                         <div class="assessment-info">
                             <div class="info-item">
@@ -241,14 +285,15 @@
 
                             <div class="info-item">
                                 <span class="info-label">Tipo de Avaliação</span>
-                                <span class="badge-type">{{ $assessment::TEST_TYPES[$assessment->type_test] ?? 'Prova' }}</span>
+                                <span
+                                    class="badge-type">{{ $assessment::TEST_TYPES[$assessment->type_test] ?? 'Prova' }}</span>
                             </div>
 
                             <div class="info-item">
                                 <span class="info-label">Período de Agendamento</span>
                                 <span class="date-badge">
-                                    {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }} 
-                                    até 
+                                    {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }}
+                                    até
                                     {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m/Y') }}
                                 </span>
                             </div>
@@ -271,9 +316,9 @@
         <!-- Meus Agendamentos -->
         <div>
             <h3 class="section-title">Meus Agendamentos</h3>
-            
-            @if($mySchedulings->count() > 0)
-                @foreach($mySchedulings as $scheduling)
+
+            @if ($mySchedulings->count() > 0)
+                @foreach ($mySchedulings as $scheduling)
                     @php
                         // Verificar se o agendamento tem avaliação vinculada
                         if (!$scheduling->assessment) {
@@ -304,25 +349,52 @@
 
                             <div class="info-item">
                                 <span class="info-label">Status</span>
+
+                                @php
+                                    $now = \Carbon\Carbon::now();
+                                    $scheduledDate = \Carbon\Carbon::parse($scheduling->scheduling);
+                                @endphp
+
                                 <span class="info-value">
-                                    @if($hasResult)
-                                        <span style="color: #28a745;">✓ Prova Realizada</span>
+                                    @if ($hasResult)
+                                        <span style="color: #28a745; font-size: 16px; font-weight: 600;">
+                                            ✓ Prova Realizada
+                                        </span>
                                     @else
-                                        <span style="color: #f39c12; font-size: 16px;">📝 Disponível para realizar</span>
+                                        @if ($now->lt($scheduledDate))
+                                            <span style="color: #f39c12; font-size: 16px; font-weight: 600;">
+                                                ⏳ Aguarde — disponível em {{ $scheduledDate->format('d/m/Y H:i') }}
+                                            </span>
+                                        @else
+                                            <span style="color: #00d9a3; font-size: 16px; font-weight: 600;">
+                                                📝 Prova Disponível para Realizar
+                                            </span>
+                                        @endif
                                     @endif
                                 </span>
                             </div>
 
+
                             <div class="info-item">
-                                @if($hasResult)
+                                @php
+                                    $now = \Carbon\Carbon::now();
+                                    $scheduledDate = \Carbon\Carbon::parse($scheduling->scheduling);
+                                @endphp
+
+                                @if ($hasResult)
                                     <a href="{{ route('student.exam.result', $scheduling->id) }}" class="btn-view-result">
                                         <i class="fas fa-eye"></i> Ver Resultado
                                     </a>
                                 @else
-                                    <a href="{{ route('student.exam.show', $scheduling->id) }}" class="btn-do-exam">
-                                        <i class="fas fa-pencil-alt"></i> Fazer Prova
-                                    </a>
+                                    @if ($now->gte($scheduledDate))
+                                        {{-- Liberar prova --}}
+                                        <a href="{{ route('student.exam.show', $scheduling->id) }}" class="btn-do-exam">
+                                            <i class="fas fa-pencil-alt"></i> Fazer Prova
+                                        </a>
+                                   
+                                    @endif
                                 @endif
+
                             </div>
                         </div>
                     </div>
@@ -338,7 +410,7 @@
 
 @section('js')
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if(session('alert'))
+    @if (session('alert'))
         <script>
             Swal.fire({
                 icon: '{{ session('alert.icon') }}',

@@ -12,6 +12,50 @@
             color: #fff;
         }
 
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
+        }
+
         .main-header.navbar {
             background-color: var(--more-dark) !important;
             border-bottom: 1px solid var(--primary-green);
@@ -180,10 +224,10 @@
         <!-- Card Principal -->
         <div class="dashboard-card">
             <h3 class="dashboard-title">Provas Agendadas</h3>
-            
-            @if($mySchedulings->count() > 0)
+
+            @if ($mySchedulings->count() > 0)
                 <div class="exams-list">
-                    @foreach($mySchedulings as $scheduling)
+                    @foreach ($mySchedulings as $scheduling)
                         <div class="exam-item">
                             <div class="exam-info">
                                 <div class="exam-discipline">{{ $scheduling->discipline->name }}</div>
@@ -192,7 +236,7 @@
                                 </div>
                             </div>
                             <div>
-                                @if(\Carbon\Carbon::parse($scheduling->scheduling)->isFuture())
+                                @if (\Carbon\Carbon::parse($scheduling->scheduling)->isFuture())
                                     <span class="exam-status status-upcoming">Agendada</span>
                                 @elseif(\Carbon\Carbon::parse($scheduling->scheduling)->isToday())
                                     <span class="exam-status status-today">Hoje</span>

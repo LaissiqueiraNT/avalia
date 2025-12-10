@@ -5,9 +5,48 @@
 @section('css')
     <style>
         body {
-            background: var(--backgroud-dashboard);
+            background: #1a252f !important;
             min-height: 100vh;
             color: #fff;
+        }
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
         }
 
         .main-header.navbar {
@@ -194,32 +233,32 @@
                         </td>
                     </tr>
                 @endforeach
-               <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<script>
-    document.querySelectorAll('.delete-form').forEach(form => {
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+                <script>
+                    document.querySelectorAll('.delete-form').forEach(form => {
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
 
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: 'Essa avaliação será removida.',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#0FAB93',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sim, excluir',
-                cancelButtonText: 'Cancelar',
-                background: '#12151f',
-                color: '#fff',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
-            });
-        });
-    });
-</script>
+                            Swal.fire({
+                                title: 'Tem certeza?',
+                                text: 'Essa avaliação será removida.',
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#0FAB93',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Sim, excluir',
+                                cancelButtonText: 'Cancelar',
+                                background: '#12151f',
+                                color: '#fff',
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        });
+                    });
+                </script>
 
             </tbody>
         </table>

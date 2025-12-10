@@ -3,12 +3,58 @@
 @section('title', 'Agendar Avaliação')
 @vite(['resources/css/appcustom.css'])
 
+
 @section('css')
     <style>
         body {
-            background: var(--backgroud-dashboard);
+
+            background: #272727 !important;
             min-height: 100vh;
             color: #fff;
+        }
+
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
         }
 
         .main-header.navbar {
@@ -34,7 +80,7 @@
         }
 
         .content-wrapper {
-            background: var(--more-dark);
+            background: #272727 !important;
         }
 
         .nav-sidebar .nav-icon {
@@ -46,7 +92,8 @@
             margin: 0 auto;
             border-radius: 25px;
             max-width: 700px;
-            padding: 40px;
+            padding: 30px;
+            width: 100% !important;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
 
@@ -114,6 +161,7 @@
             padding: 12px;
             border-radius: 8px;
             font-size: 16px;
+            width: 100% !important;
         }
 
         .form-control:focus {
@@ -149,8 +197,8 @@
         }
 
         .btn-back {
-            background: #95a5a6;
-            padding: 10px 20px;
+            background: var(--primary-green);
+            padding: 10px;
             border-radius: 8px;
             color: #fff;
             font-weight: 600;
@@ -161,7 +209,7 @@
         }
 
         .btn-back:hover {
-            background: #7f8c8d;
+            background: #17a589;
             color: #fff;
         }
 
@@ -178,6 +226,11 @@
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 25px;
+        }
+
+        select.form-control {
+            max-width: 100% !important;
+            height: 45px;
         }
     </style>
 @endsection
@@ -203,15 +256,16 @@
             <div class="detail-row">
                 <span class="detail-label">Período de Agendamento:</span>
                 <span class="detail-value">
-                    {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }} 
-                    até 
+                    {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }}
+                    até
                     {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m/Y') }}
                 </span>
             </div>
         </div>
 
         <div class="alert-info">
-            <strong>Atenção:</strong> Escolha a data em que você deseja realizar a prova. A data deve estar dentro do período de agendamento informado acima.
+            <strong>Atenção:</strong> Escolha a data em que você deseja realizar a prova. A data deve estar dentro do
+            período de agendamento informado acima.
         </div>
 
         <!-- Formulário de Agendamento -->
@@ -221,26 +275,34 @@
 
             <div class="form-group">
                 <label for="scheduling_date">Data para Realizar a Prova *</label>
-                <input type="date" 
-                       class="form-control" 
-                       id="scheduling_date" 
-                       name="scheduling_date"
-                       min="{{ $assessment->primary_date }}"
-                       max="{{ $assessment->end_date }}"
-                       required>
+                <select name="scheduling_date" class="form-control" required>
+                    <option value="">Selecione uma data</option>
+                    @foreach ($availableDates as $date)
+                        <option value="{{ $date['value'] }}">{{ $date['label'] }}</option>
+                    @endforeach
+                </select>
+
                 <div class="help-text">
-                    Selecione uma data entre {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }} 
+                    Selecione uma data entre {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }}
                     e {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m/Y') }}
                 </div>
             </div>
 
             <div class="form-group">
                 <label for="scheduling_time">Horário para Realizar a Prova *</label>
-                <input type="time" 
-                       class="form-control" 
-                       id="scheduling_time" 
-                       name="scheduling_time"
-                       required>
+                <select class="form-control" id="scheduling_time" name="scheduling_time" required>
+                    <option value="">Selecione um horário</option>
+                    <option value="08:10">08:10-09:20</option>
+                    <option value="09:25">09:25-10:35</option>
+                    <option value="10:40">10:40-11:50</option>
+                    <option value="13:15">13:15-14:25</option>
+                    <option value="14:30">14:30-15:40</option>
+                    <option value="15:45">15:45-16:55</option>
+                    <option value="17:50">17:50-19:00</option>
+                    <option value="19:20">19:20-20:30</option>
+                    <option value="20:35">20:35-21:45</option>
+                </select>
+
                 <div class="help-text">
                     @php
                         $totalMinutes = $assessment->hours ?? 120;
@@ -270,7 +332,7 @@
 @endsection
 
 @section('js')
-    @if(session('alert'))
+    @if (session('alert'))
         <script>
             Swal.fire({
                 icon: '{{ session('alert.icon') }}',
@@ -284,25 +346,32 @@
     @endif
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.getElementById('scheduleForm');
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('scheduleForm');
 
-            form.addEventListener('submit', function(e) {
-                const date = document.getElementById('scheduling_date').value;
-                const time = document.getElementById('scheduling_time').value;
+    form.addEventListener('submit', function (e) {
+        const date = document.querySelector('select[name="scheduling_date"]').value;
+        const time = document.querySelector('select[name="scheduling_time"]').value;
 
-                if (!date || !time) {
-                    e.preventDefault();
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Atenção!',
-                        text: 'Por favor, selecione a data e o horário para a prova.',
-                        confirmButtonColor: '#0FAB93',
-                        background: '#12151f',
-                        color: '#fff',
-                    });
-                }
+        if (!date || !time) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+                title: 'Atenção!',
+                text: 'Por favor, selecione a data e o horário para a prova.',
+                confirmButtonColor: '#0FAB93',
+                background: '#12151f',
+                color: '#fff',
             });
-        });
-    </script>
+            return;
+        }
+
+        // 🔥 Travar o botão pra impedir duplo clique
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "Confirmando...";
+    });
+});
+</script>
+
 @endsection

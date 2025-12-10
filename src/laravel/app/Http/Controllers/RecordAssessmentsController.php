@@ -79,11 +79,7 @@ class RecordAssessmentsController extends Controller
             'hours' => $totalMinutes,
         ]);
 
-        return redirect()->route('record-assessments.index')
-            ->with('alert', [
-                'icon' => 'success',
-                'title' => 'Avaliação criada com sucesso!',
-            ]);
+        return view('record-assessments.index-record-assessments');
     }
 
 

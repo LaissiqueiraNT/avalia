@@ -5,11 +5,55 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 @section('css')
-<style>
-   body {
+    <style>
+        body {
             background: var(--backgroud-dashboard);
             min-height: 100vh;
             color: #fff;
+        }
+
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
         }
 
         .main-header.navbar {
@@ -46,87 +90,88 @@
             color: var(--primary-green);
         }
 
-    .modal-card {
-        width: 450px;
-        margin: 40px auto;
-        background: var(--medium-dark);
-        padding: 35px;
-        border-radius: 25px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    }
+        .modal-card {
+            width: 450px;
+            margin: 40px auto;
+            background: var(--medium-dark);
+            padding: 35px;
+            border-radius: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        }
 
-    input, select {
-        background: var(--low-dark);
-        border: none;
-        color: #fff;
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-    }
+        input,
+        select {
+            background: var(--low-dark);
+            border: none;
+            color: #fff;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+        }
 
-    .btn-save {
-        background: var(--primary-green);
-        border: none;
-        padding: 12px 15px;
-        width: 100%;
-        border-radius: 8px;
-        margin-top: 20px;
-    }
-</style>
+        .btn-save {
+            background: var(--primary-green);
+            border: none;
+            padding: 12px 15px;
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
 @endsection
 
 @section('content')
 
-<div class="modal-card">
+    <div class="modal-card">
 
-    <h2 style="text-align:center; margin-bottom:20px;">
-        {{ $assessment->discipline->name }}  
-        ({{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m') }} -
-         {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m') }})
-    </h2>
+        <h2 style="text-align:center; margin-bottom:20px;">
+            {{ $assessment->discipline->name }}
+            ({{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m') }} -
+            {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m') }})
+        </h2>
 
-    <form action="{{ route('student.scheduling.store') }}" method="POST">
-        @csrf
+        <form action="{{ route('student.scheduling.store') }}" method="POST">
+            @csrf
 
-        <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
+            <input type="hidden" name="assessment_id" value="{{ $assessment->id }}">
 
-        <label>Selecione a data:</label>
-        <input type="date" name="scheduling">
+            <label>Selecione a data:</label>
+            <input type="date" name="scheduling">
 
-        <label style="margin-top:15px;">Endereço:</label>
-        <input type="text" name="address" placeholder="Ex: Rua X, Nº 123">
+            <label style="margin-top:15px;">Endereço:</label>
+            <input type="text" name="address" placeholder="Ex: Rua X, Nº 123">
 
-        <label style="margin-top:15px;">Bairro:</label>
-        <input type="text" name="neighborhood" placeholder="Ex: Centro">
+            <label style="margin-top:15px;">Bairro:</label>
+            <input type="text" name="neighborhood" placeholder="Ex: Centro">
 
-        <button class="btn-save">Agendar</button>
-    </form>
+            <button class="btn-save">Agendar</button>
+        </form>
 
-</div>
+    </div>
 
-@if ($errors->any())
-    <script>
-        Swal.fire({
-            icon: 'error',
-            title: 'Algumas informações estão faltando',
-            html: `{!! implode('<br>', $errors->all()) !!}`,
-            confirmButtonColor: '#0FAB93',
-            background: '#12151f',
-            color: '#fff',
-        });
-    </script>
-@endif
+    @if ($errors->any())
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Algumas informações estão faltando',
+                html: `{!! implode('<br>', $errors->all()) !!}`,
+                confirmButtonColor: '#0FAB93',
+                background: '#12151f',
+                color: '#fff',
+            });
+        </script>
+    @endif
 
-@if (session('alert'))
-<script>
-    Swal.fire({
-        icon: "{{ session('alert')['icon'] }}",
-        title: "{{ session('alert')['title'] }}",
-        confirmButtonColor: '#0FAB93',
-        background: '#12151f',
-        color: '#fff',
-    });
-</script>
-@endif
+    @if (session('alert'))
+        <script>
+            Swal.fire({
+                icon: "{{ session('alert')['icon'] }}",
+                title: "{{ session('alert')['title'] }}",
+                confirmButtonColor: '#0FAB93',
+                background: '#12151f',
+                color: '#fff',
+            });
+        </script>
+    @endif
 
 @endsection

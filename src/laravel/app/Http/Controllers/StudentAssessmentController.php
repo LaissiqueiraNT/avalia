@@ -43,22 +43,36 @@ class StudentAssessmentController extends Controller
     /**
      * Show the form for scheduling an assessment
      */
-    public function schedule($assessmentId)
-    {
-        $assessment = RecordAssessment::with('discipline')->findOrFail($assessmentId);
-        
-        // Verificar se o período de agendamento ainda está aberto
-        if (Carbon::parse($assessment->end_date)->lt(Carbon::today())) {
-            return redirect()->route('student.assessments.index')
-                ->with('alert', [
-                    'icon' => 'error',
-                    'title' => 'Período encerrado',
-                    'text' => 'O período para agendar esta avaliação já terminou.'
-                ]);
-        }
+   public function schedule($assessmentId)
+{
+    $assessment = RecordAssessment::with('discipline')->findOrFail($assessmentId);
 
-        return view('student-assessments.schedule', compact('assessment'));
+    if (Carbon::parse($assessment->end_date)->lt(Carbon::today())) {
+        return redirect()->route('student.assessments.index')
+            ->with('alert', [
+                'icon' => 'error',
+                'title' => 'Período encerrado',
+                'text' => 'O período para agendar esta avaliação já terminou.'
+            ]);
     }
+
+    $start = Carbon::parse($assessment->primary_date);
+    $end = Carbon::parse($assessment->end_date);
+
+    $availableDates = [];
+
+    while ($start->lte($end)) {
+        $availableDates[] = [
+            'value' => $start->format('Y-m-d'),
+            'label' => $start->format('d/m/Y'),
+        ];
+
+        $start->addDay();
+    }
+
+    return view('student-assessments.schedule', compact('assessment', 'availableDates'));
+}
+
 
     /**
      * Store the scheduling

@@ -17,7 +17,7 @@
         <!-- Cards de Estatísticas -->
         <div class="dashboard-card">
             <h3 class="dashboard-title">Dashboard</h3>
-            
+
             <div class="stats-grid">
                 <!-- Card: Avaliações Cadastradas -->
                 <div class="stat-card">
@@ -54,11 +54,11 @@
             </div>
 
             <!-- Avaliações Recentes -->
-            @if(isset($recentAssessments) && $recentAssessments->count() > 0)
+            @if (isset($recentAssessments) && $recentAssessments->count() > 0)
                 <div class="recent-section">
                     <h4 class="section-title">Avaliações Recentes</h4>
                     <div class="recent-list">
-                        @foreach($recentAssessments as $assessment)
+                        @foreach ($recentAssessments as $assessment)
                             <div class="recent-item">
                                 <div class="recent-info">
                                     <span class="recent-discipline">{{ $assessment->discipline->name }}</span>
@@ -66,8 +66,8 @@
                                 </div>
                                 <div class="recent-dates">
                                     <span class="recent-date">
-                                        {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }} 
-                                        até 
+                                        {{ \Carbon\Carbon::parse($assessment->primary_date)->format('d/m/Y') }}
+                                        até
                                         {{ \Carbon\Carbon::parse($assessment->end_date)->format('d/m/Y') }}
                                     </span>
                                 </div>
@@ -87,6 +87,50 @@
             background: var(--backgroud-dashboard);
             min-height: 100vh;
             color: #fff;
+        }
+
+        .dropdown-menu.show {
+            background: var(--medium-dark) !important;
+            border: 1px solid #333 !important;
+            border-radius: 10px !important;
+            padding: 10px 0 !important;
+        }
+
+        .dropdown-menu .dropdown-header,
+        .user-header {
+            background: var(--medium-dark) !important;
+            color: #fff !important;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .user-header p {
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        .dropdown-menu .dropdown-footer,
+        .user-footer {
+            background: var(--medium-dark) !important;
+            padding: 10px !important;
+            border-radius: 0 0 10px 10px !important;
+        }
+
+        .dropdown-menu .dropdown-footer a,
+        .user-footer .btn-default {
+            background: var(--more-dark) !important;
+            color: #fff !important;
+            font-weight: 600;
+            text-align: center;
+            border-radius: 8px;
+            transition: 0.2s;
+            border: none !important;
+            width: 100%;
+        }
+
+        .dropdown-menu .dropdown-footer a:hover,
+        .user-footer .btn-default:hover {
+            background: #17a589 !important;
+            color: #fff !important;
         }
 
         .main-header.navbar {
